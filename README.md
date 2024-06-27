@@ -1,6 +1,6 @@
 # URL Shortener
 
-My own URL shortener that is not taking any of user data.
+My own free-to-use URL shortener that offers a link expiration date.
 
 ## Dependencies
 
