@@ -10,6 +10,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@prisma/client": "5.16.0",
     "formik": "^2.4.6",
     "next": "14.2.4",
     "react": "^18",
@@ -29,6 +30,7 @@
     "husky": "^9.0.11",
     "postcss": "^8",
     "prettier": "^3.3.2",
+    "prisma": "^5.16.0",
     "tailwindcss": "^3.4.1",
     "typescript": "5.4.5"
   }
