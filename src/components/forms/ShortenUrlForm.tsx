@@ -3,6 +3,8 @@
 import * as Yup from 'yup';
 import Link from 'next/link';
 import Button from '@/components/common/Button';
+import PopupBox from '@/components/common/PopupBox';
+import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
 import ModalWindow from '@/components/common/ModalWindow';
 import { useState } from 'react';
@@ -36,20 +38,24 @@ const expirationOptions: Option[] = [
  */
 export default function ShortenUrlForm() {
   const [copied, setCopied] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
 
   const submitHandler = async (
     values: ShortenUrlFormValues,
     actions: FormikHelpers<ShortenUrlFormValues>,
   ) => {
+    setSubmitting(true);
     const newShortenedUrl = await shortenUrl(values);
 
     setShortenedUrl(getProjectUrl() + '/' + newShortenedUrl.id);
+    setSubmitting(false);
     actions.resetForm();
   };
 
   return (
     <>
+      {submitting && <PopupBox title='Shortening the URL...' message='' />}
       {shortenedUrl && (
         <ModalWindow>
           <div className='bg-zinc-50 border rounded-xl p-12 xs:w-96 w-full'>
@@ -85,15 +91,17 @@ export default function ShortenUrlForm() {
         onSubmit={submitHandler}>
         {({ errors, touched }) => (
           <Form className='mt-12'>
-            <InputField
-              type='text'
-              name='originUrl'
-              label='Enter URL address'
-              placeholder='https://google.com'
-              className='md:w-80 w-48'
-              error={touched.originUrl && errors.originUrl}
-            />
-            <div className='mt-8'>
+            <MotionDiv delay={0.2}>
+              <InputField
+                type='text'
+                name='originUrl'
+                label='Enter URL address'
+                placeholder='https://google.com'
+                className='md:w-80 w-48'
+                error={touched.originUrl && errors.originUrl}
+              />
+            </MotionDiv>
+            <MotionDiv delay={0.3} className='mt-8'>
               <InputField
                 as='select'
                 type='text'
@@ -103,10 +111,12 @@ export default function ShortenUrlForm() {
                 options={expirationOptions}
                 error={touched.expiration && errors.expiration}
               />
-            </div>
-            <div className='text-center mt-8'>
-              <Button type='submit'>Shorten URL</Button>
-            </div>
+            </MotionDiv>
+            <MotionDiv delay={0.4} className='text-center mt-8'>
+              <Button type='submit' disabled={submitting}>
+                Shorten URL
+              </Button>
+            </MotionDiv>
           </Form>
         )}
       </Formik>

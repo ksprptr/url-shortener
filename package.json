@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "5.16.0",
     "formik": "^2.4.6",
+    "framer-motion": "^11.2.13",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
