@@ -42,7 +42,7 @@ export default function InputField({
   return (
     <div className='mb-4 flex flex-col'>
       {label && (
-        <label className='text-zinc-700 dark:text-zinc-50 font-medium' htmlFor={name}>
+        <label className='text-zinc-700 font-medium' htmlFor={name}>
           {label}:
         </label>
       )}
