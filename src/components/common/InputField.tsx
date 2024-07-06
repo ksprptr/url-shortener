@@ -37,11 +37,12 @@ export default function InputField({
   fullRounded = false,
   isReadOnly = false,
   onChange,
+  className,
 }: Props) {
   return (
-    <div className='mb-4'>
+    <div className='mb-4 flex flex-col'>
       {label && (
-        <label className='text-zinc-900 dark:text-zinc-50 font-medium' htmlFor={name}>
+        <label className='text-zinc-700 dark:text-zinc-50 font-medium' htmlFor={name}>
           {label}:
         </label>
       )}
@@ -57,7 +58,7 @@ export default function InputField({
               onChange: (e: any) => onChange(e.target.value),
             }
           : {})}
-        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} text-zinc-900 py-2 px-4 focus:outline-none select-none`}>
+        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} text-zinc-900 border focus:border-purple-600 py-2 px-4 focus:outline-none select-non mt-1 ${className}`}>
         {options &&
           options.map((option, index) => (
             <option key={index} value={option.value}>

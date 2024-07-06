@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { ResponseData } from '@/utils/types/global-types';
+import { getProjectUrl } from '@/utils/functions/url-functions';
 
 /**
  * Middleware of the application
@@ -18,7 +19,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const shortenedUrlId = splitPath[0];
-  const response = await fetch('http://localhost:3000/api/link/' + shortenedUrlId);
+  const response = await fetch(getProjectUrl() + '/api/link/' + shortenedUrlId);
   const responseBody: ResponseData = await response.json();
 
   if (responseBody.status === 302 && responseBody.redirectUrl) {

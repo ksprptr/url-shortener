@@ -1,6 +1,6 @@
 # URL Shortener
 
-My own free-to-use URL shortener that offers a link expiration date.
+Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.
 
 ## Dependencies
 
