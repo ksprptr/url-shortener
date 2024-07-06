@@ -2,8 +2,8 @@
 
 import prisma from '@/utils/prisma/prisma-client';
 import { ShortenedUrl } from '@prisma/client';
-import { ExpirationType } from '@/utils/enums/expiration-enums';
 import { ShortenUrlFormValues } from '@/utils/types/form-types';
+import { EXPIRATIONS, ExpirationType } from '@/utils/enums/expiration-enums';
 
 /**
  * Funciton to get the expiration date based on the expiration enum
@@ -11,16 +11,16 @@ import { ShortenUrlFormValues } from '@/utils/types/form-types';
 const getExpirationDate = (expiration: ExpirationType): Date | null => {
   const date = new Date();
   switch (expiration) {
-    case 'DAY':
+    case EXPIRATIONS.DAY:
       date.setDate(date.getDate() + 1);
       break;
-    case 'WEEK':
+    case EXPIRATIONS.WEEK:
       date.setDate(date.getDate() + 7);
       break;
-    case 'MONTH':
+    case EXPIRATIONS.MONTH:
       date.setMonth(date.getMonth() + 1);
       break;
-    case 'NEVER':
+    case EXPIRATIONS.NEVER:
       return null;
       break;
     default:
