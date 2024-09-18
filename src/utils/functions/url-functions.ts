@@ -6,5 +6,5 @@ export const getProjectUrl = () => {
     return 'http://localhost:3000';
   }
 
-  return 'https://link.kasparpetr.com';
+  return 'https://link.ksprptr.dev';
 };

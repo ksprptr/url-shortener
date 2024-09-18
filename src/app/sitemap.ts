@@ -6,13 +6,13 @@ import { MetadataRoute } from 'next';
 export default function Sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://shortener.kasparpetr.com',
+      url: 'https://shortener.ksprptr.dev',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,
     },
     {
-      url: 'https://link.kasparpetr.com',
+      url: 'https://link.ksprptr.dev',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,

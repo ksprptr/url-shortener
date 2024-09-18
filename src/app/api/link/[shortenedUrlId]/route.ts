@@ -14,7 +14,7 @@ export async function GET(request: Request, { params }: { params: { shortenedUrl
   if (!shortenedUrl) {
     return Response.json({
       status: 404,
-      message: 'KasparPetr.com | 404 - Shortened URL not found',
+      message: 'ksprptr.dev | 404 - Shortened URL not found',
     });
   }
 
@@ -31,13 +31,13 @@ export async function GET(request: Request, { params }: { params: { shortenedUrl
 
     return Response.json({
       status: 404,
-      message: 'KasparPetr.com | 404 - Shortened URL not found',
+      message: 'ksprptr.dev | 404 - Shortened URL not found',
     });
   }
 
   return Response.json({
     status: 302,
-    message: 'KasparPetr.com | 302 - Shortened URL found',
+    message: 'ksprptr.dev | 302 - Shortened URL found',
     redirectUrl: shortenedUrl.originUrl,
   });
 }

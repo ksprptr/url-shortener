@@ -9,7 +9,7 @@ export default function Robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://shortener.kasparpetr.com/sitemap.xml',
-    host: 'https://shortener.kasparpetr.com',
+    sitemap: 'https://shortener.ksprptr.dev/sitemap.xml',
+    host: 'https://shortener.ksprptr.dev',
   };
 }

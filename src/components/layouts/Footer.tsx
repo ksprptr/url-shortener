@@ -11,7 +11,7 @@ export default function Footer() {
       <p>
         Created by{' '}
         <Link
-          href='https://kasparpetr.com/'
+          href='https://ksprptr.dev/'
           target='_blank'
           className='hover:underline font-medium text-purple-600'>
           Petr Kaspar

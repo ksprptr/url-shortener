@@ -15,13 +15,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'URL Shortnener',
     type: 'website',
-    url: 'https://shortener.kasparpetr.com/',
+    url: 'https://shortener.ksprptr.dev/',
     siteName: 'URL Shortnener',
     description:
       "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
     images: [
       {
-        url: 'https://shortener.kasparpetr.com/assets/og_image.png',
+        url: 'https://shortener.ksprptr.dev/assets/og_image.png',
         width: 1200,
         height: 630,
         alt: 'URL Shortener',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
     images: [
       {
-        url: 'https://shortener.kasparpetr.com/assets/og_image.png',
+        url: 'https://shortener.ksprptr.dev/assets/og_image.png',
         width: 1200,
         height: 630,
         alt: 'URL Shortener',
