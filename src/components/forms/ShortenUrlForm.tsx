@@ -7,15 +7,16 @@ import Heading from '@/components/common/Heading';
 import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { EXPIRATIONS } from '@/utils/enums/expiration-enums';
 import { useHttpClient } from '@/utils/http-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getExpirationDate } from '@/utils/functions/expiration-functions';
+import { useRef, useState } from 'react';
+import { useOnClickOutside } from '@/utils/hooks/useOnClickOutside';
+import { ShortenedUrlFormValues } from '@/utils/types/form-types';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url-validation';
-import { Option, ShortenedUrlFormValues } from '@/utils/types/form-types';
+import { formatExpirationDate, getExpirationDate } from '@/utils/functions/expiration-functions';
 
 /**
  * Component representing a form to shorten an URL
@@ -27,17 +28,13 @@ export default function ShortenedUrlForm() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
 
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  useOnClickOutside(modalRef, () => setShortenedUrl(null));
+
   const initialValues: ShortenedUrlFormValues = {
     originUrl: '',
     expirationDate: EXPIRATIONS.DAY,
   };
-
-  const expirationOptions: Option[] = [
-    { value: EXPIRATIONS.DAY, label: '1 Day' },
-    { value: EXPIRATIONS.WEEK, label: '1 Week' },
-    { value: EXPIRATIONS.MONTH, label: '1 Month' },
-    { value: EXPIRATIONS.NEVER, label: 'Never' },
-  ];
 
   const submitHandler = async (
     values: ShortenedUrlFormValues,
@@ -80,7 +77,7 @@ export default function ShortenedUrlForm() {
   return (
     <>
       {shortenedUrl && (
-        <Modal>
+        <Modal ref={modalRef}>
           <div className='bg-zinc-50 border rounded-xl p-12 relative xs:w-auto w-full'>
             <button
               onClick={() => setShortenedUrl(null)}
@@ -133,7 +130,9 @@ export default function ShortenedUrlForm() {
                 name='expirationDate'
                 label='Select expiration date'
                 placeholder='1 Day'
-                options={expirationOptions}
+                options={Object.values(EXPIRATIONS).map((expiration) => {
+                  return { value: expiration, label: formatExpirationDate(expiration) };
+                })}
                 error={touched.expirationDate && errors.expirationDate}
               />
             </MotionDiv>

@@ -1,7 +1,7 @@
 import { Expiration, EXPIRATIONS } from '@/utils/enums/expiration-enums';
 
 /**
- * Funciton to get the expiration date based on the expiration enum
+ * Function to get the expiration date based on the expiration enum
  */
 export const getExpirationDate = (expiration: Expiration): Date | null => {
   const date = new Date();
@@ -23,4 +23,22 @@ export const getExpirationDate = (expiration: Expiration): Date | null => {
   }
 
   return date;
+};
+
+/**
+ * Function to format the expiration date
+ */
+export const formatExpirationDate = (expiration: Expiration): string => {
+  switch (expiration) {
+    case EXPIRATIONS.DAY:
+      return '1 Day';
+    case EXPIRATIONS.WEEK:
+      return '1 Week';
+    case EXPIRATIONS.MONTH:
+      return '1 Month';
+    case EXPIRATIONS.NEVER:
+      return 'Never';
+    default:
+      return 'Unknown';
+  }
 };
