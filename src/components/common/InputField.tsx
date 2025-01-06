@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Field } from 'formik';
 import { Option } from '@/utils/types/form-types';
 import { ExtendedProps } from '@/utils/types/global-types';

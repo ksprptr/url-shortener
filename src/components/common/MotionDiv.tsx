@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ExtendedProps } from '@/utils/types/global-types';
 

@@ -1,93 +1,118 @@
 'use client';
 
-import * as Yup from 'yup';
 import Link from 'next/link';
+import Modal from '@/components/common/Modal';
 import Button from '@/components/common/Button';
-import PopupBox from '@/components/common/PopupBox';
+import Heading from '@/components/common/Heading';
 import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
-import ModalWindow from '@/components/common/ModalWindow';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { shortenUrl } from '@/utils/functions/shorten-url-functions';
-import { getProjectUrl } from '@/utils/functions/url-functions';
+import { useSnackbar } from 'notistack';
+import { EXPIRATIONS } from '@/utils/enums/expiration-enums';
+import { useHttpClient } from '@/utils/http-client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getExpirationDate } from '@/utils/functions/expiration-functions';
 import { Formik, Form, FormikHelpers } from 'formik';
-import { Option, ShortenUrlFormValues } from '@/utils/types/form-types';
-
-// Validation schema
-const validaitonSchema = Yup.object({
-  originUrl: Yup.string().url('Enter a valid URL address.').required('URL address is required.'),
-  expiration: Yup.string().required('Expiration date is required.').nullable(),
-});
-
-// Initial values
-const initialValues: ShortenUrlFormValues = {
-  originUrl: '',
-  expiration: 'DAY',
-};
-
-// Expiration options
-const expirationOptions: Option[] = [
-  { value: 'DAY', label: '1 Day' },
-  { value: 'WEEK', label: '1 Week' },
-  { value: 'MONTH', label: '1 Month' },
-  { value: 'NEVER', label: 'Never' },
-];
+import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url-validation';
+import { Option, ShortenedUrlFormValues } from '@/utils/types/form-types';
 
 /**
  * Component representing a form to shorten an URL
  */
-export default function ShortenUrlForm() {
-  const [copied, setCopied] = useState<boolean>(false);
+export default function ShortenedUrlForm() {
+  const { httpPost } = useHttpClient();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
 
+  const initialValues: ShortenedUrlFormValues = {
+    originUrl: '',
+    expirationDate: EXPIRATIONS.DAY,
+  };
+
+  const expirationOptions: Option[] = [
+    { value: EXPIRATIONS.DAY, label: '1 Day' },
+    { value: EXPIRATIONS.WEEK, label: '1 Week' },
+    { value: EXPIRATIONS.MONTH, label: '1 Month' },
+    { value: EXPIRATIONS.NEVER, label: 'Never' },
+  ];
+
   const submitHandler = async (
-    values: ShortenUrlFormValues,
-    actions: FormikHelpers<ShortenUrlFormValues>,
+    values: ShortenedUrlFormValues,
+    meta: FormikHelpers<ShortenedUrlFormValues>,
   ) => {
     setSubmitting(true);
-    const newShortenedUrl = await shortenUrl(values);
+    enqueueSnackbar('Shortening URL...', { variant: 'info' });
 
-    setShortenedUrl(getProjectUrl() + '/' + newShortenedUrl.id);
+    const expirationDate = getExpirationDate(values.expirationDate);
+
+    const response = await httpPost('/shortened-urls/create', {
+      originUrl: values.originUrl,
+      ...(expirationDate && { expirationDate: expirationDate.toISOString() }),
+    });
+
+    if (response.status === 429) {
+      enqueueSnackbar('You reached the limit of shortened URLs per day. Try again later.', {
+        variant: 'error',
+      });
+      setSubmitting(false);
+      return;
+    }
+
+    if (response.status !== 201) {
+      console.error(response.data);
+      enqueueSnackbar('There was an error shortening the URL. Check console for more detail.', {
+        variant: 'error',
+      });
+      setSubmitting(false);
+      return;
+    }
+
+    meta.resetForm();
     setSubmitting(false);
-    actions.resetForm();
+    setShortenedUrl(`${process.env.NEXT_PUBLIC_SITE_URL}/l/${response.data.id}`);
+
+    enqueueSnackbar('URL shortened successfully.', { variant: 'success' });
   };
 
   return (
     <>
-      {submitting && <PopupBox title='Shortening the URL...' message='' />}
       {shortenedUrl && (
-        <ModalWindow>
-          <div className='bg-zinc-50 border rounded-xl p-12 xs:w-96 w-full'>
-            <h2 className='text-green-600 font-bold text-3xl'>Link shortened!</h2>
-            <hr className='my-4' />
-            <p className='mt-2 text-gray-600 font-medium'>
-              Your link:
-              <br />
-              <Link href={shortenedUrl} target='_blank' className='text-green-600 hover:underline'>
-                {shortenedUrl}
-              </Link>
-            </p>
-            <div className='flex items-center justify-between mt-8'>
+        <Modal>
+          <div className='bg-zinc-50 border rounded-xl p-12 relative xs:w-auto w-full'>
+            <button
+              onClick={() => setShortenedUrl(null)}
+              className='absolute top-1 right-1 text-zinc-50 text-sm bg-zinc-600 hover:bg-zinc-700 duration-150 w-6 h-6 rounded-full'>
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+            <Heading size='sm' className='font-semibold text-center'>
+              URL shortened!
+            </Heading>
+            <hr className='my-4 w-1/4 mx-auto' />
+            <Link
+              href={shortenedUrl}
+              target='_blank'
+              className='text-zinc-700 hover:underline font-medium text-center'>
+              {shortenedUrl}
+            </Link>
+            <div className='flex justify-center mt-8'>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(shortenedUrl);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1000);
-                }}
-                disabled={copied}>
-                {copied ? 'Copied' : 'Copy'}
-              </Button>
-              <Button variant='danger' onClick={() => setShortenedUrl(null)}>
-                Close
+                  enqueueSnackbar('Copied to clipboard!', { variant: 'success' });
+                }}>
+                Copy
               </Button>
             </div>
           </div>
-        </ModalWindow>
+        </Modal>
       )}
+
       <Formik
         initialValues={initialValues}
-        validationSchema={validaitonSchema}
+        validationSchema={shortenedUrlValidationSchema}
         onSubmit={submitHandler}>
         {({ errors, touched }) => (
           <Form className='mt-12'>
@@ -105,11 +130,11 @@ export default function ShortenUrlForm() {
               <InputField
                 as='select'
                 type='text'
-                name='expiration'
+                name='expirationDate'
                 label='Select expiration date'
                 placeholder='1 Day'
                 options={expirationOptions}
-                error={touched.expiration && errors.expiration}
+                error={touched.expirationDate && errors.expirationDate}
               />
             </MotionDiv>
             <MotionDiv delay={0.4} className='text-center mt-8'>

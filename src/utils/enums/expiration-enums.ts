@@ -5,4 +5,4 @@ export const EXPIRATIONS = {
   NEVER: 'NEVER',
 } as const;
 
-export type ExpirationType = keyof typeof EXPIRATIONS;
+export type Expiration = keyof typeof EXPIRATIONS;

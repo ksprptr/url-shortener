@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { getVariant } from '@/utils/functions/button-functions';
 import { ExtendedProps } from '@/utils/types/global-types';
 
@@ -32,7 +31,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       type={type}
-      className={`${getVariant(variant)} ${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} py-2 px-4 font-medium select-none duration-150 disabled:opacity-50 ${className}`}>
+      className={`${getVariant(variant)} ${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} py-2 px-4 font-medium select-none duration-150 disabled:opacity-75 ${className}`}>
       {children}
     </button>
   );

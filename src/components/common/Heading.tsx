@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { ExtendedProps } from '@/utils/types/global-types';
 
 // Props interface
@@ -17,7 +16,7 @@ export default function Heading({ size = 'md', className, children }: Props) {
       case 'xsm':
         return '3xl:text-2xl lg:text-xl md:text-lg text-base';
       case 'sm':
-        return '3xl:text-4xl lg:text-3xl md:text-2xl text-xl';
+        return '3xl:text-4xl lg:text-3xl text-2xl';
       case 'md':
         return '3xl:text-5xl lg:text-4xl md:text-3xl text-2xl';
       case 'lg':
@@ -33,7 +32,7 @@ export default function Heading({ size = 'md', className, children }: Props) {
 
   return (
     <div
-      className={`${getSize()} bg-gradient-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent font-medium !leading-normal ${className}`}>
+      className={`${getSize()} bg-gradient-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent !leading-normal ${className}`}>
       {children}
     </div>
   );

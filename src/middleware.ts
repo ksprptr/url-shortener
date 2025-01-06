@@ -1,44 +1,41 @@
-import { NextRequest } from 'next/server';
-import { ResponseData } from '@/utils/types/global-types';
-import { getProjectUrl } from '@/utils/functions/url-functions';
+import { ShortenedUrl } from '@/utils/types/shortened-urls-types';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware of the application
  */
 export async function middleware(request: NextRequest) {
-  const requestUrl = new URL(request.nextUrl.href);
+  const pathName = request.nextUrl.pathname;
+  const splitPath = pathName.split('/').slice(2);
 
-  if (requestUrl.pathname === '/') {
-    return;
-  }
-
-  const splitPath = requestUrl.pathname.split('/').slice(1);
-
-  if (splitPath.length !== 1) {
-    return;
-  }
+  if (pathName === '/l') return NextResponse.next();
+  if (splitPath.length !== 1) return NextResponse.redirect(new URL('/not-found', request.url));
 
   const shortenedUrlId = splitPath[0];
-  const response = await fetch(getProjectUrl() + '/api/link/' + shortenedUrlId);
-  const responseBody: ResponseData = await response.json();
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/shortened-urls/${shortenedUrlId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
 
-  if (responseBody.status === 302 && responseBody.redirectUrl) {
-    return Response.redirect(responseBody.redirectUrl, 301);
+  if (!response.ok) return NextResponse.next();
+
+  const shortenedUrl: ShortenedUrl = await response.json();
+
+  if (shortenedUrl.expirationDate && new Date(shortenedUrl.expirationDate) < new Date()) {
+    return NextResponse.redirect(new URL('/not-found', request.url));
   }
+
+  return NextResponse.redirect(new URL(shortenedUrl.originUrl, request.url));
 }
 
 /**
  * Configuration for the middleware
  */
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: '/l/:path*',
 };

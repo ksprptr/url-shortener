@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react';
 import Button from '@/components/common/Button';
 import Heading from '@/components/common/Heading';
 import CenterLayout from '@/components/layouts/CenterLayout';
@@ -10,7 +9,7 @@ import CenterLayout from '@/components/layouts/CenterLayout';
 export default function NotFoundPage() {
   return (
     <CenterLayout>
-      <Heading size='lg' className='!font-bold text-center'>
+      <Heading size='lg' className='font-semibold text-center'>
         404 | Page not found
       </Heading>
       <Link href='/' className='mt-12'>

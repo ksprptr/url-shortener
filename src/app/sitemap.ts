@@ -6,13 +6,7 @@ import { MetadataRoute } from 'next';
 export default function Sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://shortener.ksprptr.dev',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    {
-      url: 'https://link.ksprptr.dev',
+      url: 'https://url.ksprptr.dev',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,
