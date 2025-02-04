@@ -37,5 +37,5 @@
 
 | Description | Values                   |
 | ----------- | ------------------------ |
-| **Server:** | Vercel                   |
+| **Server:** | Coolify                  |
 | **URL:**    | https://url.ksprptr.dev/ |
