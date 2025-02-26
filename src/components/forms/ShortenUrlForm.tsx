@@ -45,7 +45,7 @@ export default function ShortenedUrlForm() {
 
     const expirationDate = getExpirationDate(values.expirationDate);
 
-    const response = await httpPost('/shortened-urls/create', {
+    const response = await httpPost('/shortened-urls', {
       originUrl: values.originUrl,
       ...(expirationDate && { expirationDate: expirationDate.toISOString() }),
     });
