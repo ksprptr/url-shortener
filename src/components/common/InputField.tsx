@@ -41,7 +41,7 @@ export default function InputField({
   return (
     <div className='mb-4 flex flex-col'>
       {label && (
-        <label className='text-zinc-700 font-medium' htmlFor={name}>
+        <label className='font-medium text-zinc-700' htmlFor={name}>
           {label}:
         </label>
       )}
@@ -57,7 +57,7 @@ export default function InputField({
               onChange: (e: any) => onChange(e.target.value),
             }
           : {})}
-        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} text-zinc-900 border focus:border-purple-600 py-2 px-4 focus:outline-hidden select-non mt-1 ${className}`}>
+        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} select-non mt-1 border px-4 py-2 text-zinc-900 focus:border-purple-600 focus:outline-hidden ${className}`}>
         {options &&
           options.map((option, index) => (
             <option key={index} value={option.value}>
@@ -65,7 +65,7 @@ export default function InputField({
             </option>
           ))}
       </Field>
-      <p className='mt-1 h-2 text-red-500 text-xs'>{error}</p>
+      <p className='mt-1 h-2 text-xs text-red-500'>{error}</p>
     </div>
   );
 }

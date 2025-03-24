@@ -5,14 +5,14 @@ import Link from 'next/link';
  */
 export default function Footer() {
   return (
-    <div className='text-zinc-700 text-center py-4'>
+    <div className='py-4 text-center text-zinc-700'>
       <p>&copy; URL Shortener {new Date().getFullYear()}</p>
       <p>
         Created by{' '}
         <Link
           href='https://ksprptr.dev/'
           target='_blank'
-          className='hover:underline font-medium text-purple-600'>
+          className='font-medium text-purple-600 hover:underline'>
           Petr Kašpar
         </Link>
       </p>

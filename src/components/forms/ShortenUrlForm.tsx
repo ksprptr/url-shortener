@@ -78,23 +78,23 @@ export default function ShortenedUrlForm() {
     <>
       {shortenedUrl && (
         <Modal ref={modalRef}>
-          <div className='bg-zinc-50 border rounded-xl p-12 relative xs:w-auto w-full'>
+          <div className='xs:w-auto relative w-full rounded-xl border bg-zinc-50 p-12'>
             <button
               onClick={() => setShortenedUrl(null)}
-              className='absolute top-1 right-1 text-zinc-50 text-sm bg-zinc-600 hover:bg-zinc-700 duration-150 w-6 h-6 rounded-full hover:cursor-pointer'>
+              className='absolute top-1 right-1 h-6 w-6 rounded-full bg-zinc-600 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-700'>
               <FontAwesomeIcon icon={faXmark} />
             </button>
-            <Heading size='sm' className='font-semibold text-center'>
+            <Heading size='sm' className='text-center font-semibold'>
               URL shortened!
             </Heading>
-            <hr className='my-4 w-1/4 mx-auto' />
+            <hr className='mx-auto my-4 w-1/4' />
             <Link
               href={shortenedUrl}
               target='_blank'
-              className='text-zinc-700 hover:underline font-medium text-center'>
+              className='text-center font-medium text-zinc-700 hover:underline'>
               {shortenedUrl}
             </Link>
-            <div className='flex justify-center mt-8'>
+            <div className='mt-8 flex justify-center'>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(shortenedUrl);
@@ -119,7 +119,7 @@ export default function ShortenedUrlForm() {
                 name='originUrl'
                 label='Enter URL address'
                 placeholder='https://google.com'
-                className='md:w-80 w-48'
+                className='w-48 md:w-80'
                 error={touched.originUrl && errors.originUrl}
               />
             </MotionDiv>
@@ -136,7 +136,7 @@ export default function ShortenedUrlForm() {
                 error={touched.expirationDate && errors.expirationDate}
               />
             </MotionDiv>
-            <MotionDiv delay={0.4} className='text-center mt-8'>
+            <MotionDiv delay={0.4} className='mt-8 text-center'>
               <Button type='submit' disabled={submitting}>
                 Shorten URL
               </Button>

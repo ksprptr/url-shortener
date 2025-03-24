@@ -9,7 +9,7 @@ import CenterLayout from '@/components/layouts/CenterLayout';
 export default function NotFoundPage() {
   return (
     <CenterLayout>
-      <Heading size='lg' className='font-semibold text-center'>
+      <Heading size='lg' className='text-center font-semibold'>
         404 | Page not found
       </Heading>
       <Link href='/' className='mt-12'>

@@ -4,5 +4,5 @@ import { PropsWithChildren } from 'react';
  * Component representing a center layout
  */
 export default function CenterLayout({ children }: PropsWithChildren) {
-  return <div className='px-4 flex flex-col h-screen justify-center items-center'>{children}</div>;
+  return <div className='flex h-screen flex-col items-center justify-center px-4'>{children}</div>;
 }

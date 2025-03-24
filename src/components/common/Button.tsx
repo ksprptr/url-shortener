@@ -31,7 +31,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       type={type}
-      className={`${getVariant(variant)} ${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} py-2 px-4 font-medium select-none duration-150 disabled:opacity-75 hover:cursor-pointer ${className}`}>
+      className={`${getVariant(variant)} ${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} px-4 py-2 font-medium duration-150 select-none hover:cursor-pointer disabled:opacity-75 ${className}`}>
       {children}
     </button>
   );
