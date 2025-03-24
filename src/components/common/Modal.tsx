@@ -1,4 +1,4 @@
-import { ExtendedProps } from '@/utils/types/global-types';
+import { ExtendedProps } from '@/utils/types/global.types';
 
 /**
  * Component representing a modal

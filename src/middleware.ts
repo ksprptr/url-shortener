@@ -1,4 +1,4 @@
-import { ShortenedUrl } from '@/utils/types/shortened-urls-types';
+import { ShortenedUrl } from '@/utils/types/shortened-urls.types';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**

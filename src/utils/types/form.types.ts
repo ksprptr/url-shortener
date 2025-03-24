@@ -1,4 +1,4 @@
-import { Expiration } from '@/utils/enums/expiration-enums';
+import { Expiration } from '@/utils/enums/expiration.enums';
 
 export interface Option {
   label: string;

@@ -8,15 +8,15 @@ import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useSnackbar } from 'notistack';
-import { EXPIRATIONS } from '@/utils/enums/expiration-enums';
-import { useHttpClient } from '@/utils/http-client';
+import { EXPIRATIONS } from '@/utils/enums/expiration.enums';
+import { useHttpClient } from '@/utils/http.client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useOnClickOutside } from '@/utils/hooks/useOnClickOutside';
-import { ShortenedUrlFormValues } from '@/utils/types/form-types';
+import { ShortenedUrlFormValues } from '@/utils/types/form.types';
 import { Formik, Form, FormikHelpers } from 'formik';
-import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url-validation';
-import { formatExpirationDate, getExpirationDate } from '@/utils/functions/expiration-functions';
+import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url.validation';
+import { formatExpirationDate, getExpirationDate } from '@/utils/functions/expiration.functions';
 
 /**
  * Component representing a form to shorten an URL

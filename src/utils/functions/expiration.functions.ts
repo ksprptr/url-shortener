@@ -1,4 +1,4 @@
-import { Expiration, EXPIRATIONS } from '@/utils/enums/expiration-enums';
+import { Expiration, EXPIRATIONS } from '@/utils/enums/expiration.enums';
 
 /**
  * Function to get the expiration date based on the expiration enum

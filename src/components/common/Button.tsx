@@ -1,7 +1,7 @@
 'use client';
 
-import { getVariant } from '@/utils/functions/button-functions';
-import { ExtendedProps } from '@/utils/types/global-types';
+import { getVariant } from '@/utils/functions/button.functions';
+import { ExtendedProps } from '@/utils/types/global.types';
 
 // Props interface
 interface Props extends ExtendedProps {

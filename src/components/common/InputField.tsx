@@ -1,8 +1,8 @@
 'use client';
 
 import { Field } from 'formik';
-import { Option } from '@/utils/types/form-types';
-import { ExtendedProps } from '@/utils/types/global-types';
+import { Option } from '@/utils/types/form.types';
+import { ExtendedProps } from '@/utils/types/global.types';
 
 // Props interface
 interface Props extends ExtendedProps {

@@ -1,6 +1,6 @@
 'use client';
 
-import { ExtendedProps } from '@/utils/types/global-types';
+import { ExtendedProps } from '@/utils/types/global.types';
 
 // Props interface
 interface Props extends ExtendedProps {
