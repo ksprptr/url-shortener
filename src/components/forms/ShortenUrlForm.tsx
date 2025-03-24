@@ -81,7 +81,7 @@ export default function ShortenedUrlForm() {
           <div className='bg-zinc-50 border rounded-xl p-12 relative xs:w-auto w-full'>
             <button
               onClick={() => setShortenedUrl(null)}
-              className='absolute top-1 right-1 text-zinc-50 text-sm bg-zinc-600 hover:bg-zinc-700 duration-150 w-6 h-6 rounded-full'>
+              className='absolute top-1 right-1 text-zinc-50 text-sm bg-zinc-600 hover:bg-zinc-700 duration-150 w-6 h-6 rounded-full hover:cursor-pointer'>
               <FontAwesomeIcon icon={faXmark} />
             </button>
             <Heading size='sm' className='font-semibold text-center'>

@@ -32,7 +32,7 @@ export default function Heading({ size = 'md', className, children }: Props) {
 
   return (
     <div
-      className={`${getSize()} bg-gradient-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent !leading-normal ${className}`}>
+      className={`${getSize()} bg-linear-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent leading-normal! ${className}`}>
       {children}
     </div>
   );
