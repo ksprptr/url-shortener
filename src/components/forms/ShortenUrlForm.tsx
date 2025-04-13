@@ -26,7 +26,10 @@ export default function ShortenedUrlForm() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
+  const [shortenedUrl, setShortenedUrl] = useState<{
+    url: string;
+    expirationDate: Date | null;
+  } | null>(null);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
   useOnClickOutside(modalRef, () => setShortenedUrl(null));
@@ -69,43 +72,68 @@ export default function ShortenedUrlForm() {
 
     meta.resetForm();
     setSubmitting(false);
-    setShortenedUrl(`${process.env.NEXT_PUBLIC_SITE_URL}/l/${response.data.id}`);
+    setShortenedUrl({
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/l/${response.data.id}`,
+      expirationDate,
+    });
 
     enqueueSnackbar('URL shortened successfully.', { variant: 'success' });
   };
 
   return (
     <>
-      {shortenedUrl && (
-        <Modal ref={modalRef}>
-          <div className='xs:w-auto relative w-full rounded-xl border bg-zinc-50 p-12'>
-            <button
-              onClick={() => setShortenedUrl(null)}
-              className='absolute top-1 right-1 h-6 w-6 rounded-full bg-zinc-600 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-700'>
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-            <Heading size='sm' className='text-center font-semibold'>
-              URL shortened!
-            </Heading>
-            <hr className='mx-auto my-4 w-1/4' />
-            <Link
-              href={shortenedUrl}
-              target='_blank'
-              className='text-center font-medium text-zinc-700 hover:underline'>
-              {shortenedUrl}
-            </Link>
-            <div className='mt-8 flex justify-center'>
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(shortenedUrl);
-                  enqueueSnackbar('Copied to clipboard!', { variant: 'success' });
-                }}>
-                Copy
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
+      <Modal visible={shortenedUrl !== null} onClose={() => setShortenedUrl(null)}>
+        <button
+          onClick={() => setShortenedUrl(null)}
+          className='absolute top-1 right-1 h-6 w-6 rounded-full bg-zinc-600 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-700'>
+          <FontAwesomeIcon icon={faXmark} />
+        </button>
+        <Heading size='sm' className='text-center font-semibold'>
+          URL shortened!
+        </Heading>
+        <hr className='mx-auto my-4 w-1/4' />
+
+        <div className='space-y-2 text-center'>
+          <p className='text-zinc-500'>
+            {shortenedUrl?.expirationDate ? (
+              <>
+                Your shortened URL will expire on
+                <br />
+                <span className='text-lg font-medium'>
+                  {shortenedUrl?.expirationDate
+                    ? shortenedUrl.expirationDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : 'Never'}
+                </span>
+              </>
+            ) : (
+              <>
+                Your shortened URL will <span className='font-medium'>never</span> expire.
+              </>
+            )}
+          </p>
+
+          <Link
+            href={shortenedUrl ? shortenedUrl.url : {}}
+            target='_blank'
+            className='font-medium text-purple-600 hover:underline'>
+            {shortenedUrl?.url}
+          </Link>
+        </div>
+
+        <div className='mt-8 flex justify-center'>
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(shortenedUrl ? shortenedUrl.url : '');
+              enqueueSnackbar('Copied to clipboard!', { variant: 'success' });
+            }}>
+            Copy
+          </Button>
+        </div>
+      </Modal>
 
       <Formik
         initialValues={initialValues}

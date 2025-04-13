@@ -1,8 +1,11 @@
 import './globals.css';
 
-import Provider from '@/components/layouts/Provider';
+import Footer from '@/components/layouts/Footer';
+import Layout from '@/components/layouts/Layout';
+import NotistackProvider from '@/components/layouts/NotistackProvider';
 import { Inter } from 'next/font/google';
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
+import { PropsWithChildren } from 'react';
 
 // Load Inter font
 const inter = Inter({ subsets: ['latin'] });
@@ -48,15 +51,16 @@ export const metadata: Metadata = {
 /**
  * Component representing the root layout
  */
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body className={`bg-zinc-50 ${inter.className}`}>
-        <Provider>{children}</Provider>
+        <div id='modal-root' />
+
+        <NotistackProvider>
+          <Layout>{children}</Layout>
+        </NotistackProvider>
+        <Footer />
       </body>
     </html>
   );
