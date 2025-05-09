@@ -14,14 +14,14 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'URL Shortnener',
   description:
-    "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
+    'A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.',
   openGraph: {
     title: 'URL Shortnener',
     type: 'website',
     url: 'https://url.ksprptr.dev/',
     siteName: 'URL Shortnener',
     description:
-      "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
+      'A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.',
     images: [
       {
         url: 'https://url.ksprptr.dev/assets/og_image.png',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     title: 'URL Shortnener',
     description:
-      "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
+      'A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.',
     images: [
       {
         url: 'https://url.ksprptr.dev/assets/og_image.png',

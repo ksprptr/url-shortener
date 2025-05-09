@@ -8,7 +8,7 @@ export default function Manifest(): MetadataRoute.Manifest {
     name: 'URL Shortener',
     short_name: 'URL Shortener',
     description:
-      "Simple free-to-use URL shortener that doesn't store any user data and offers a link expiration date.",
+      'A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.',
     start_url: '/',
     display: 'browser',
     background_color: '#fafafa',

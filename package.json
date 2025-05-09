@@ -1,7 +1,10 @@
 {
   "name": "url-shortener",
   "version": "0.1.0",
+  "description": "A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.",
   "private": true,
+  "author": "Petr Kašpar",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
