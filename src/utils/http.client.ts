@@ -51,8 +51,5 @@ export const useHttpClient = () => {
     }
   };
 
-  return {
-    httpGet,
-    httpPost,
-  };
+  return { httpGet, httpPost };
 };

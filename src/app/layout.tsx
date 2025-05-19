@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: 'URL Shortnener',
   description:
     'A simple, free-to-use URL shortener that respects user privacy by storing no personal data and supports link expiration.',
+  keywords: ['URL Shortener', 'URL Shortening', 'Link Shortener', 'Link Management'],
   openGraph: {
     title: 'URL Shortnener',
     type: 'website',
@@ -43,7 +44,6 @@ export const metadata: Metadata = {
         alt: 'URL Shortener',
       },
     ],
-    site: '@urlshortener',
     card: 'summary_large_image',
   },
 };

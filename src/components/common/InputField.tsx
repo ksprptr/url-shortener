@@ -57,7 +57,7 @@ export default function InputField({
               onChange: (e: any) => onChange(e.target.value),
             }
           : {})}
-        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} select-non mt-1 border px-4 py-2 text-zinc-900 focus:border-purple-600 focus:outline-hidden ${className}`}>
+        className={`${fullWidth ? 'w-full' : ''} ${fullRounded ? 'rounded-full' : 'rounded-md'} ${as === 'select' ? 'hover:cursor-pointer' : ''} mt-1 border border-zinc-200 px-4 py-2 text-zinc-900 focus:border-purple-600 focus:outline-hidden ${className}`}>
         {options &&
           options.map((option, index) => (
             <option key={index} value={option.value}>

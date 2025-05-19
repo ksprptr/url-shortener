@@ -1,22 +1,22 @@
 'use client';
 
+import * as expirationHelpers from '@/utils/functions/expiration.functions';
+
 import Link from 'next/link';
 import Modal from '@/components/common/Modal';
 import Button from '@/components/common/Button';
 import Heading from '@/components/common/Heading';
 import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 import { useSnackbar } from 'notistack';
 import { EXPIRATIONS } from '@/utils/enums/expiration.enums';
 import { useHttpClient } from '@/utils/http.client';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useOnClickOutside } from '@/utils/hooks/useOnClickOutside';
 import { ShortenedUrlFormValues } from '@/utils/types/form.types';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url.validation';
-import { formatExpirationDate, getExpirationDate } from '@/utils/functions/expiration.functions';
 
 /**
  * Component representing a form to shorten an URL
@@ -46,7 +46,7 @@ export default function ShortenedUrlForm() {
     setSubmitting(true);
     enqueueSnackbar('Shortening URL...', { variant: 'info' });
 
-    const expirationDate = getExpirationDate(values.expirationDate);
+    const expirationDate = expirationHelpers.getExpirationDate(values.expirationDate);
 
     const response = await httpPost('/shortened-urls', {
       originUrl: values.originUrl,
@@ -85,8 +85,8 @@ export default function ShortenedUrlForm() {
       <Modal visible={shortenedUrl !== null} onClose={() => setShortenedUrl(null)}>
         <button
           onClick={() => setShortenedUrl(null)}
-          className='absolute top-1 right-1 h-6 w-6 rounded-full bg-zinc-600 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-700'>
-          <FontAwesomeIcon icon={faXmark} />
+          className='absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-400 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-500'>
+          <XMarkIcon className='h-5 w-5' />
         </button>
         <Heading size='sm' className='text-center font-semibold'>
           URL shortened!
@@ -159,7 +159,10 @@ export default function ShortenedUrlForm() {
                 label='Select expiration date'
                 placeholder='1 Day'
                 options={Object.values(EXPIRATIONS).map((expiration) => {
-                  return { value: expiration, label: formatExpirationDate(expiration) };
+                  return {
+                    value: expiration,
+                    label: expirationHelpers.formatExpirationDate(expiration),
+                  };
                 })}
                 error={touched.expirationDate && errors.expirationDate}
               />

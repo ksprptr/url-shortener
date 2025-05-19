@@ -40,9 +40,7 @@ export default function Modal({
     };
   }, [visible]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   if (!mounted) return null;
 
@@ -72,7 +70,7 @@ export default function Modal({
               {/* Modal */}
               <div
                 ref={modalRef}
-                className={`relative max-w-5xl overflow-auto rounded-xl border bg-zinc-50 p-12 ${className}`}>
+                className={`relative max-w-5xl overflow-auto rounded-xl bg-zinc-50 p-12 ${className}`}>
                 {children}
               </div>
             </motion.div>
