@@ -7,28 +7,22 @@ import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 // Custom styles for notistack snackbars
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   '&.notistack-MuiContent-success': {
-    backgroundColor: '#9810fa1a',
-    color: '#6e11b0',
-    border: '2px solid #6e11b01a',
+    backgroundColor: '#9333ea',
+    color: '#fafafa',
+    border: '2px solid #9333ea',
     borderRadius: '8px',
-    backdropFilter: 'blur(12px)',
-    boxShadow: 'none',
   },
   '&.notistack-MuiContent-error': {
-    backgroundColor: '#9810fa1a',
-    color: '#6e11b0',
-    border: '2px solid #6e11b01a',
+    backgroundColor: '#9333ea',
+    color: '#fafafa',
+    border: '2px solid #9333ea',
     borderRadius: '8px',
-    backdropFilter: 'blur(12px)',
-    boxShadow: 'none',
   },
   '&.notistack-MuiContent-info': {
-    backgroundColor: '#9810fa1a',
-    color: '#6e11b0',
-    border: '2px solid #6e11b01a',
+    backgroundColor: '#9333ea',
+    color: '#fafafa',
+    border: '2px solid #9333ea',
     borderRadius: '8px',
-    backdropFilter: 'blur(12px)',
-    boxShadow: 'none',
   },
 }));
 

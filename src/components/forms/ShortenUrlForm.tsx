@@ -88,10 +88,12 @@ export default function ShortenedUrlForm() {
           className='absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-400 text-sm text-zinc-50 duration-150 hover:cursor-pointer hover:bg-zinc-500'>
           <XMarkIcon className='h-5 w-5' />
         </button>
+
         <Heading size='sm' className='text-center font-semibold'>
           URL shortened!
         </Heading>
-        <hr className='mx-auto my-4 w-1/4' />
+
+        <hr className='mx-auto my-4 w-1/4 text-black opacity-10' />
 
         <div className='space-y-2 text-center'>
           <p className='text-zinc-500'>
