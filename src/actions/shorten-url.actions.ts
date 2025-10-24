@@ -2,6 +2,7 @@
 
 import http from '@/utils/http.client';
 import { ShortenedUrlFormValues } from '@/utils/types/form.types';
+import { AxiosError } from 'axios';
 
 /**
  * Function to shorten a URL by sending a POST request to the api
@@ -15,6 +16,10 @@ export const shortenUrl = async (values: ShortenedUrlFormValues, expirationDate:
 
     return { status: res.status, data: res.data };
   } catch (error) {
+    if (error instanceof AxiosError && error.status === 429) {
+      return { status: 429, data: null };
+    }
+
     console.error('Error shortening URL:', error);
 
     return { status: 500, data: null };
