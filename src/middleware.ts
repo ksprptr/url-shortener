@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   const splitPath = pathName.split('/').slice(2);
   const cookieStore = await cookies();
 
-  if (!cookieStore.get('SESSION-ID')) {
+  if (!cookieStore.get('SESSION-ID') || !cookieStore.get('XSRF-TOKEN')) {
     const { csrfToken, sessionId } = await getCsrfSession();
 
     cookieStore.set('SESSION-ID', sessionId, {
