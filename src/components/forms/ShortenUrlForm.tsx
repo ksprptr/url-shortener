@@ -9,9 +9,9 @@ import Heading from '@/components/common/Heading';
 import MotionDiv from '@/components/common/MotionDiv';
 import InputField from '@/components/common/InputField';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { shortenUrl } from '@/actions/shorten-url.actions';
 import { useSnackbar } from 'notistack';
 import { EXPIRATIONS } from '@/utils/enums/expiration.enums';
-import { useHttpClient } from '@/utils/http.client';
 import { useRef, useState } from 'react';
 import { useOnClickOutside } from '@/utils/hooks/useOnClickOutside';
 import { ShortenedUrlFormValues } from '@/utils/types/form.types';
@@ -22,7 +22,6 @@ import { shortenedUrlValidationSchema } from '@/utils/validations/shortened-url.
  * Component representing a form to shorten an URL
  */
 export default function ShortenedUrlForm() {
-  const { httpPost } = useHttpClient();
   const { enqueueSnackbar } = useSnackbar();
 
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -48,10 +47,7 @@ export default function ShortenedUrlForm() {
 
     const expirationDate = expirationHelpers.getExpirationDate(values.expirationDate);
 
-    const response = await httpPost('/shortened-urls', {
-      originUrl: values.originUrl,
-      ...(expirationDate && { expirationDate: expirationDate.toISOString() }),
-    });
+    const response = await shortenUrl(values, expirationDate);
 
     if (response.status === 429) {
       enqueueSnackbar('You reached the limit of shortened URLs per day. Try again later.', {
@@ -62,7 +58,6 @@ export default function ShortenedUrlForm() {
     }
 
     if (response.status !== 201) {
-      console.error(response.data);
       enqueueSnackbar('There was an error shortening the URL. Check console for more detail.', {
         variant: 'error',
       });

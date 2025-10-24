@@ -1,55 +1,51 @@
-'use client';
-
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
+import { cookies } from 'next/headers';
 
 /**
- * Http client to make requests to the server
+ * Create an axios instance
  */
-export const useHttpClient = () => {
-  /**
-   * Create an axios client
-   */
-  const client = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: 10000,
-  });
+const http = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+  timeout: 10000,
+});
 
-  /**
-   * GET request to the server
-   */
-  const httpGet = async (url: string) => {
-    try {
-      return await client.get(url);
-    } catch (error) {
-      const axiosError = error as AxiosError;
+/**
+ * Add a request interceptor
+ */
+http.interceptors.request.use(
+  async (config) => {
+    const cookieStore = await cookies();
 
-      if (!axiosError.response) {
-        throw axiosError;
-      }
+    const xsrfToken = cookieStore.get('XSRF-TOKEN');
+    const sessionId = cookieStore.get('SESSION-ID');
 
-      return axiosError.response;
+    if (!xsrfToken || !sessionId) {
+      return config;
     }
-  };
 
-  /**
-   * POST request to the server
-   */
-  const httpPost = async (url: string, data: any) => {
-    try {
-      return await client.post(url, data);
-    } catch (error) {
-      const axiosError = error as AxiosError;
+    config.headers['x-csrf-token'] = xsrfToken.value;
+    config.headers['Cookie'] =
+      `SESSION-ID=${sessionId.value}; XSRF-TOKEN=${xsrfToken.value}; ${config.headers['Cookie'] || ''}`;
 
-      if (!axiosError.response) {
-        throw axiosError;
-      }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
-      return axiosError.response;
+/**
+ * Add a response interceptor
+ */
+http.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.code === 'ECONNRESET' && !error.config.__isRetry) {
+      error.config.__isRetry = true;
+      return http.request(error.config);
     }
-  };
+    return Promise.reject(error);
+  },
+);
 
-  return { httpGet, httpPost };
-};
+export default http;
