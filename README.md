@@ -10,6 +10,7 @@
 - [Run](#run)
 - [How it works](#how-it-works)
 - [Deployment](#deployment)
+- [Documentation](#documentation)
 - [License](#license)
 
 ## Features
@@ -38,8 +39,8 @@
 ## Prerequisites
 
 - Node.js 24+ and pnpm 11+ — only for running the apps natively
-- [Docker](https://docs.docker.com/get-started/get-docker/) — required for the database, and the
-  simplest way to run the whole stack
+- [Docker](https://docs.docker.com/get-started/get-docker/) — required for the database
+  (PostgreSQL 18), and the simplest way to run the whole stack
 
 ## Setup
 
@@ -119,6 +120,14 @@ the two happened. An unknown slug is a plain `404`.
 
 `APP_URL` is baked into the prerendered SEO metadata at build time, so set it as a **build-time**
 variable as well as a runtime one, and keep the two identical.
+
+## Documentation
+
+Guides that are too long for this file live in [`docs/`](./docs):
+
+- [Upgrading Postgres](./docs/upgrading-postgres.md) — the database ships as **Postgres 18**
+  (`POSTGRES_VERSION` in the root `.env`); moving an existing 17 instance to it is a dump and
+  restore, not a version bump.
 
 ## License
 

@@ -47,6 +47,10 @@ example/
 # Prompt set (working material, not part of the app)
 prompts/
 
+# Database dumps taken during a Postgres upgrade (see docs/upgrading-postgres.md) — they hold every
+# row, refresh tokens included. Narrow on purpose: Prisma's migration .sql files are committed.
+/url-shortener-backup*.sql
+
 # Postman environment holds real values (tokens/passwords); the example is committed instead
 postman/*.postman_environment.json
 !postman/*.postman_environment.example.json

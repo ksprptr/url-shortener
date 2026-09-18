@@ -13,16 +13,22 @@
 #
 # Infra + web settings: root .env (see .env.example)
 # API secrets:          apps/api/.env (see apps/api/.env.example)
+#
+# Postgres major version: POSTGRES_VERSION in the root .env (defaults to 18). Changing it on an
+# existing instance is a dump and restore, not a version bump — see docs/upgrading-postgres.md.
 
 services:
   url-shortener-pg:
-    image: postgres:17-alpine
+    image: postgres:${POSTGRES_VERSION:-18}-alpine
     container_name: url-shortener-pg
     restart: unless-stopped
     environment:
       POSTGRES_USER: '${DB_USER}'
       POSTGRES_PASSWORD: '${DB_PASS}'
       POSTGRES_DB: '${DB_NAME}'
+      # 18 moved the default cluster to /var/lib/postgresql/<major>/docker. Pinning PGDATA to the
+      # pre-18 path keeps one volume and one mount working whichever major POSTGRES_VERSION names.
+      PGDATA: '/var/lib/postgresql/data'
     ports:
       # Loopback only — nothing outside this host needs to reach the database.
       - '127.0.0.1:${DB_PORT:-5432}:5432'
