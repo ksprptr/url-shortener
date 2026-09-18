@@ -1,6 +1,11 @@
-.next
-.husky
-.prettierignore
-.stylelintignore
-coverage
-node_modules
+**/node_modules/**
+**/dist/**
+**/build/**
+**/coverage/**
+**/.next/**
+**/.turbo/**
+apps/api/src/prisma/generated/**
+example/**
+
+# Lockfiles (pnpm writes its own format)
+**/pnpm-lock.yaml

@@ -1,37 +1,52 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencies
+node_modules/
+.pnpm-store/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
+# Build outputs
+dist/
+.next/
 next-env.d.ts
+.turbo/
+out/
+build/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.test.example
+
+# Claude
+CLAUDE.md
+**/CLAUDE.md
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.tsbuildinfo
+
+# Reference material (not part of the app)
+example/
+
+# Prompt set (working material, not part of the app)
+prompts/
+
+# Postman environment holds real values (tokens/passwords); the example is committed instead
+postman/*.postman_environment.json
+!postman/*.postman_environment.example.json

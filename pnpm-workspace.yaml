@@ -1,0 +1,33 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Security: force patched transitive versions (advisories on the ranges Next and the
+# Prisma/Nest toolchains pull in). None of these sit in the running server's request path;
+# they are pinned so `pnpm audit` stays clean and a vulnerable copy cannot sneak into a build.
+# Keep them at or above the advisory's patched version — a stale pin is worse than none,
+# because it silently holds the vulnerable copy in place.
+overrides:
+  sharp: ^0.35.3
+  postcss: ^8.5.23
+  brace-expansion: 5.0.9
+  cross-spawn: ^7.0.6
+  tmp: ^0.2.6
+  # Both arrive through the `prisma` CLI, which is a runtime dependency only because the API image
+  # runs `migrate deploy`. mysql2 is a driver this Postgres app never loads; deepmerge-ts is used by
+  # @prisma/config while reading prisma.config.ts. Neither sits in the request path, but they are
+  # pinned so `pnpm audit --prod` stays clean. deepmerge-ts crosses a major (7 -> 8) — verified
+  # against `prisma generate` and `migrate status` before pinning.
+  mysql2: ^3.23.1
+  deepmerge-ts: ^8.0.2
+
+allowBuilds:
+  # Jest's optional native file watcher — never built here and the suites do not need it.
+  '@parcel/watcher': false
+  '@prisma/engines': true
+  '@scarf/scarf': false
+  '@swc/core': true
+  esbuild: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
