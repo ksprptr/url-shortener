@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { type FormEvent, type KeyboardEvent, useEffect, useId, useState } from 'react';
 
 import { login } from '@/actions/auth/auth.actions';
+import { SESSION_EXPIRED_REASON } from '@/common/constants/auth.constants';
 import Button from '@/components/common/Button';
 import Field from '@/components/common/Field';
 import Icon from '@/components/common/Icon';
@@ -25,7 +26,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const sessionExpired = searchParams.get('reason') === 'session-expired';
+  const sessionExpired = searchParams.get('reason') === SESSION_EXPIRED_REASON;
 
   useEffect(() => {
     if (sessionExpired) {

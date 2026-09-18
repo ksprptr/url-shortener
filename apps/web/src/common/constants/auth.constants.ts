@@ -3,6 +3,9 @@ export const ACCESS_TOKEN_COOKIE = 'accessToken';
 export const REFRESH_TOKEN_COOKIE = 'refreshToken';
 export const REFRESH_LOCK_COOKIE = 'refresh_lock';
 
+/** Marks the login page as reached from a session the API turned out to reject. */
+export const SESSION_EXPIRED_REASON = 'session-expired';
+
 /** Refresh proactively when the access token expires within this window. */
 export const ACCESS_EXP_SKEW_MS = 60_000;
 
