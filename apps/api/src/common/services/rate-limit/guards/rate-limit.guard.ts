@@ -1,0 +1,87 @@
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Request } from 'express';
+
+import { type RateLimitConfig, rateLimitConfig } from '@/config/rate-limit.config';
+
+import { RATE_LIMIT_META_KEY, RateLimitRule } from '../decorators/rate-limit.decorator';
+import { SKIP_RATE_LIMIT_META_KEY } from '../decorators/skip-rate-limit.decorator';
+import { RateLimitHelpers } from '../helpers/rate-limit.helpers';
+
+/**
+ * Per-route `@RateLimit` rule (or default) keyed by client IP; `@SkipRateLimit` opts out; over → 429.
+ **/
+@Injectable()
+export class RateLimitGuard implements CanActivate {
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly rateLimitHelpers: RateLimitHelpers,
+    @Inject(rateLimitConfig.KEY) private readonly rateLimitCfg: RateLimitConfig,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (!this.rateLimitCfg.enabled) {
+      return true;
+    }
+
+    const handler = context.getHandler();
+    const clazz = context.getClass();
+
+    const skip =
+      this.reflector.get<boolean>(SKIP_RATE_LIMIT_META_KEY, handler) ??
+      this.reflector.get<boolean>(SKIP_RATE_LIMIT_META_KEY, clazz);
+
+    if (skip) {
+      return true;
+    }
+
+    const rule: RateLimitRule = this.reflector.get<RateLimitRule>(RATE_LIMIT_META_KEY, handler) ??
+      this.reflector.get<RateLimitRule>(RATE_LIMIT_META_KEY, clazz) ?? {
+        points: this.rateLimitCfg.defaultPoints,
+        duration: this.rateLimitCfg.defaultDuration,
+      };
+
+    const req = context.switchToHttp().getRequest<Request>();
+    const method = req.method?.toUpperCase() ?? 'UNKNOWN';
+    const path = (req.route?.path as string | undefined) ?? req.path ?? 'UNKNOWN';
+
+    const key = this.rateLimitHelpers.resolveSubjectKey(req);
+
+    if (!key) {
+      throw new BadRequestException('Unable to determine subject for rate limiting.');
+    }
+
+    const message = rule.errorMessage || 'Too many requests, try again later.';
+
+    try {
+      const ipLimiter = this.rateLimitHelpers.getLimiter({ method, path, rule, scope: 'ip' });
+      await ipLimiter.consume(key);
+
+      // The global cap can't be outrun by rotating X-Forwarded-For; a single fixed bucket.
+      if (rule.global) {
+        const globalLimiter = this.rateLimitHelpers.getLimiter({
+          method,
+          path,
+          rule: rule.global,
+          scope: 'global',
+        });
+        await globalLimiter.consume('all');
+      }
+
+      return true;
+    } catch (error) {
+      // A limiter rejection is the consumed-points result, not a thrown Error — rethrow real errors.
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new HttpException(message, 429);
+    }
+  }
+}
