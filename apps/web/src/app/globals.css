@@ -1,0 +1,164 @@
+@import 'tailwindcss';
+
+/* Drive the `dark:` variant from the `.dark` class that next-themes toggles on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  * {
+    @apply scroll-smooth;
+  }
+
+  a,
+  svg,
+  img,
+  input,
+  label,
+  select,
+  button,
+  textarea {
+    @apply select-none;
+  }
+
+  button {
+    @apply hover:cursor-pointer disabled:cursor-not-allowed;
+  }
+
+  /* Keyboard-focus ring for interactive elements (visible on Tab, not on click). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [role='button']:focus-visible,
+  [role='menuitem']:focus-visible,
+  [tabindex]:not([tabindex='-1']):focus-visible {
+    @apply ring-2 ring-cyan-500 ring-offset-2 ring-offset-zinc-50 outline-none dark:ring-offset-zinc-950;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2371717a' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5 8 10.5 12 6.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem 1rem;
+    padding-right: 2.25rem;
+  }
+
+  /* The `dark:` variant can't target scrollbar pseudo-elements, so `.dark` overrides these. */
+  :root {
+    --scrollbar-track: var(--color-zinc-100);
+    --scrollbar-thumb: var(--color-zinc-300);
+    --scrollbar-thumb-hover: var(--color-zinc-400);
+  }
+
+  .dark {
+    --scrollbar-track: var(--color-zinc-900);
+    --scrollbar-thumb: var(--color-zinc-700);
+    --scrollbar-thumb-hover: var(--color-zinc-600);
+  }
+
+  /* Firefox + Chrome 121+ */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar {
+    @apply h-2.5 w-2.5;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background: var(--scrollbar-thumb);
+    /* Inset the thumb so it reads as a pill floating in the track. */
+    border: 2px solid var(--scrollbar-track);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
+  }
+}
+
+/* Wraps the app so the JavaScript-off screen can hide it with a single rule; generates no box. */
+.app-shell {
+  display: contents;
+}
+
+/* JavaScript-off screen — themed with `prefers-color-scheme`, as next-themes never adds `.dark`. */
+.noscript-screen {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.noscript-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cyan-600);
+}
+
+.noscript-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-zinc-900);
+}
+
+.noscript-text {
+  max-width: 28rem;
+  color: var(--color-zinc-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  .noscript-title {
+    color: var(--color-zinc-50);
+  }
+
+  .noscript-text {
+    color: var(--color-zinc-400);
+  }
+}
+
+/* Decorative animated background blobs. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
+.animate-float {
+  animation: float 14s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 20s ease-in-out infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-slow {
+    animation: none;
+  }
+}

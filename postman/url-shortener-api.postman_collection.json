@@ -1,0 +1,716 @@
+{
+  "info": {
+    "name": "URL Shortener API",
+    "description": "Regression collection for the URL Shortener API. Values live in a local environment file (see postman/README.md) \u2014 never in this collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "login \u2014 wrong password \u2192 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"password\": \"definitely-not-the-password\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "login \u2014 unknown field rejected \u2192 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"password\": \"{{operatorPassword}}\", \"role\": \"admin\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "me \u2014 no token \u2192 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "login \u2014 correct password \u2192 200",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"password\": \"{{operatorPassword}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('sets auth cookies', () => { const h = pm.response.headers.get('set-cookie') || ''; pm.expect(String(h)).to.include('HttpOnly'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "me \u2014 with session \u2192 200",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('authenticated', () => pm.expect(pm.response.json().authenticated).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "refresh \u2014 rotates the session \u2192 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Public links",
+      "item": [
+        {
+          "name": "shorten \u2014 happy path \u2192 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"targetUrl\": \"example.com/runtime-test\", \"expiration\": \"HOUR\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "const b = pm.response.json();",
+                  "pm.test('absolute short url', () => pm.expect(b.shortUrl).to.match(/^https?:\\/\\/.+\\/\\w+$/));",
+                  "pm.test('normalizes the target', () => pm.expect(b.targetUrl).to.eql('https://example.com/runtime-test'));",
+                  "pm.collectionVariables.set('publicSlug', b.slug);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "shorten \u2014 javascript: target \u2192 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"targetUrl\": \"javascript:alert(1)\", \"expiration\": \"HOUR\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "shorten \u2014 empty body \u2192 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "shorten \u2014 unknown expiration \u2192 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"targetUrl\": \"https://example.com\", \"expiration\": \"DECADE\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "resolve \u2014 live link \u2192 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links/{{publicSlug}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links", "{{publicSlug}}", "resolve"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('returns the target', () => pm.expect(pm.response.json().targetUrl).to.eql('https://example.com/runtime-test'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "resolve \u2014 unknown slug \u2192 404",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links/definitely-no-such-slug/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links", "definitely-no-such-slug", "resolve"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "list \u2014 with session \u2192 200",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('paged shape', () => { const b = pm.response.json(); pm.expect(b).to.have.property('items'); pm.expect(b).to.have.property('pageCount'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "stats \u2014 with session \u2192 200",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "stats"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('30-day series', () => pm.expect(pm.response.json().daily).to.have.lengthOf(30));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "create \u2014 custom slug \u2192 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"targetUrl\": \"https://example.com/admin-made\", \"expiration\": \"NEVER\", \"slug\": \"runtime-test-link\", \"note\": \"created by the runtime test\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.collectionVariables.set('adminLinkId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "create \u2014 reserved slug \u2192 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"targetUrl\": \"https://example.com\", \"expiration\": \"NEVER\", \"slug\": \"admin\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 409', () => pm.response.to.have.status(409));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get one \u2014 existing \u2192 200",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links/{{adminLinkId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links", "{{adminLinkId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get one \u2014 unknown id \u2192 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "update \u2014 disable \u2192 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links/{{adminLinkId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links", "{{adminLinkId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"disabled\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));",
+                  "pm.test('status is DISABLED', () => pm.expect(pm.response.json().status).to.eql('DISABLED'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "resolve \u2014 disabled link \u2192 410",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/links/runtime-test-link/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "links", "runtime-test-link", "resolve"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 410', () => pm.response.to.have.status(410));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete \u2014 existing \u2192 204",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links/{{adminLinkId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links", "{{adminLinkId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 204', () => pm.response.to.have.status(204));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete \u2014 already gone \u2192 404",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/links/{{adminLinkId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "links", "{{adminLinkId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Session teardown",
+      "item": [
+        {
+          "name": "logout \u2192 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "me \u2014 after logout \u2192 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('responds under 1s', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "publicSlug",
+      "value": ""
+    },
+    {
+      "key": "adminLinkId",
+      "value": ""
+    }
+  ]
+}
