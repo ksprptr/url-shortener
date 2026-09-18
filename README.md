@@ -122,6 +122,5 @@ variable as well as a runtime one, and keep the two identical.
 
 ## License
 
-> This software is developed by **Petr Kašpar** and is licensed for non-commercial use only.
-> Commercial use is prohibited without permission.
+> This software is developed by **Petr Kašpar** and is licensed under the MIT License.  
 > For more details, please refer to the [LICENSE](./LICENSE) file.
