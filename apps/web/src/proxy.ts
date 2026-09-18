@@ -9,15 +9,17 @@ import {
   REFRESH_TOKEN_COOKIE,
   REFRESH_WAIT_INTERVAL_MS,
   REFRESH_WAIT_MAX_ATTEMPTS,
+  SESSION_EXPIRED_REASON,
 } from '@/common/constants/auth.constants';
 import { peekRefresh, refreshSession } from '@/common/services/auth/refresh.server';
 import {
   applyAuthCookies,
   clearAuthCookies,
+  type CookieWriter,
   type ParsedSetCookie,
 } from '@/common/services/auth/tokens.server';
 import { isAccessTokenFresh } from '@/common/utils/jwt.functions';
-import { resolveRequestOrigin } from '@/common/utils/request-origin';
+import { isCrossSiteRequest, resolveRequestOrigin } from '@/common/utils/request-origin';
 import { appServerConfig } from '@/configs/app/app.server-config';
 
 /** Everything under here needs a session. The rest of the app (landing, redirects) is public. */
@@ -46,16 +48,22 @@ const withRefreshedCookies = (request: NextRequest, tokens: ParsedSetCookie[]): 
 /**
  * Builds a redirect to the login page, optionally flagging an expired session.
  **/
-const redirectToLogin = (request: NextRequest, sessionExpired: boolean): NextResponse => {
+// Clears through the cookie store rather than the response: once anything in this pass has written
+// via `cookies()` — the refresh lock below does — Next emits only those writes and drops the ones
+// made on the returned response, which would silently leave the dead cookies in place.
+const redirectToLogin = (
+  request: NextRequest,
+  cookieStore: CookieWriter,
+  sessionExpired: boolean,
+): NextResponse => {
   const url = new URL(LOGIN_PATH, resolveRequestOrigin(request));
   if (sessionExpired) {
-    url.searchParams.set('reason', 'session-expired');
+    url.searchParams.set('reason', SESSION_EXPIRED_REASON);
   }
 
-  const response = NextResponse.redirect(url);
-  clearAuthCookies(response.cookies);
+  clearAuthCookies(cookieStore);
 
-  return response;
+  return NextResponse.redirect(url);
 };
 
 /**
@@ -81,7 +89,7 @@ const waitForRefresh = async (refreshToken: string): Promise<ParsedSetCookie[] |
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
-  // Logout clears cookies itself; everything outside the admin and the login page is public.
+  // Everything outside the admin and the login page is public (the landing page and the redirects).
   const isProtected = pathname === PROTECTED_PREFIX || pathname.startsWith(`${PROTECTED_PREFIX}/`);
   if (!isProtected && pathname !== LOGIN_PATH) {
     return NextResponse.next();
@@ -93,13 +101,25 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const accessFresh = isAccessTokenFresh(accessToken, ACCESS_EXP_SKEW_MS);
 
   if (pathname === LOGIN_PATH) {
+    // The admin bounces here when the API rejects a token that still looks fresh; sending it back
+    // on `accessFresh` would loop, so the flag ends the session here instead. A render cannot write
+    // cookies, which is why the dead pair is cleared on this leg rather than by the page itself.
+    if (request.nextUrl.searchParams.get('reason') === SESSION_EXPIRED_REASON) {
+      // Same-site only: a forced cross-site navigation must not be able to sign the operator out.
+      if (!isCrossSiteRequest(request)) {
+        clearAuthCookies(cookieStore);
+      }
+
+      return NextResponse.next();
+    }
+
     return accessFresh
       ? NextResponse.redirect(new URL(PROTECTED_PREFIX, resolveRequestOrigin(request)))
       : NextResponse.next();
   }
 
   if (!refreshToken) {
-    return redirectToLogin(request, false);
+    return redirectToLogin(request, cookieStore, false);
   }
 
   if (accessFresh) {
@@ -134,7 +154,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.next({ request: { headers: withRefreshedCookies(request, tokens) } });
   } catch {
-    return redirectToLogin(request, true);
+    return redirectToLogin(request, cookieStore, true);
   }
 }
 

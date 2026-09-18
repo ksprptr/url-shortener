@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { logout } from '@/actions/auth/auth.actions';
 import Icon from '@/components/common/Icon';
 import Logo from '@/components/common/Logo';
 import ThemeToggle from '@/components/common/ThemeToggle';
@@ -40,13 +41,15 @@ export default function AdminHeader({ onRefresh, refreshing }: Props) {
 
           <ThemeToggle />
 
-          <Link
-            href='/logout'
-            aria-label='Sign out'
-            title='Sign out'
-            className='inline-flex h-9 w-9 items-center justify-center rounded-xl text-zinc-500 transition hover:bg-red-500/10 hover:text-red-500 dark:text-zinc-400'>
-            <Icon icon='LogOut' className='h-4 w-4' />
-          </Link>
+          <form action={logout} className='flex'>
+            <button
+              type='submit'
+              aria-label='Sign out'
+              title='Sign out'
+              className='inline-flex h-9 w-9 items-center justify-center rounded-xl text-zinc-500 transition hover:bg-red-500/10 hover:text-red-500 dark:text-zinc-400'>
+              <Icon icon='LogOut' className='h-4 w-4' />
+            </button>
+          </form>
         </div>
       </div>
     </header>
